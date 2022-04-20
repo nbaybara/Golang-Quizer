@@ -1,0 +1,32 @@
+{
+    "questions": [
+        {
+            "Question": "Cheetahs are the fastest animals on the planet. True or false? ",
+            "Answers": [
+                "True",
+                "False"
+            ],
+            "correctAnswers": "True"
+        },
+        {
+            "Question": "What is the capital of France?",
+            "Answers": [
+                "Paris",
+                "Lyon",
+                "Strasbourg",
+                "Fort-de-France"
+            ],
+            "correctAnswers": "Paris"
+        },
+        {
+            "Question": "Where is the Empire State Building",
+            "Answers": [
+                "Şikago",
+                "New Jersey",
+                "Washington",
+                "New York"
+            ],
+            "correctAnswers": "New York"
+        }
+    ]
+}
