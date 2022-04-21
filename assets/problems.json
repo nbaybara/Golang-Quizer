@@ -1,32 +1,31 @@
 {
     "questions": [
         {
-            "Question": "Cheetahs are the fastest animals on the planet. True or false? ",
+            "Question": "Athlete Usain Bolt is faster than a cheetah ",
             "Answers": [
                 "True",
                 "False"
             ],
-            "correctAnswers": "True"
+            "explanation": "Not quite. Bolt is fast, but the cheetah is twice as fast",
+            "correctAnswers": "False"
         },
         {
-            "Question": "What is the capital of France?",
+            "Question": "Peanuts are not nuts!",
             "Answers": [
-                "Paris",
-                "Lyon",
-                "Strasbourg",
-                "Fort-de-France"
+                "True",
+                "False"
             ],
-            "correctAnswers": "Paris"
+            "correctAnswers": "True",
+            "explanation": "Peanuts are not nuts!"
         },
         {
-            "Question": "Where is the Empire State Building",
+            "Question": "Human teeth are not strong as the teeth of a mature shark",
             "Answers": [
-                "Şikago",
-                "New Jersey",
-                "Washington",
-                "New York"
+                "True",
+                "False"
             ],
-            "correctAnswers": "New York"
+            "correctAnswers": "True",
+            "explanation": "Human teeth are just as strong as the teeth of a mature shark"
         }
     ]
 }
