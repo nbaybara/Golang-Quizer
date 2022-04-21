@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -13,38 +12,6 @@ import (
 var scores []int
 var questions Questions
 
-func startQuiz() {
-
-	color.Set(color.Italic)
-	totalScore := askQuestion(questions)
-	giveBriefOfQuiz(totalScore, len(questions.Questions))
-	finishQuizer()
-	color.Set(color.Reset)
-}
-
-func finishQuizer() {
-
-	done := make(chan string)
-	go getInput(done)
-
-	fmt.Println("Do u want to tested again?: yes - no ??:")
-
-	for {
-		select {
-		case ans := <-done:
-			if checkAnswer(ans, "yes") {
-				startQuiz()
-			} else {
-				color.Set(color.FgRed)
-				fmt.Println("Thank you for testing my project. Feel free to contribute it :)")
-				os.Stdin.Close()
-			}
-
-		}
-
-	}
-}
-
 func checkAnswer(ans string, expectedAnswer string) bool {
 	if strings.Compare(strings.Trim(strings.ToLower(ans), "\n"), strings.ToLower(expectedAnswer)) == 0 {
 		return true
@@ -54,13 +21,16 @@ func checkAnswer(ans string, expectedAnswer string) bool {
 
 func giveBriefOfQuiz(userScore int, totalQuestions int) {
 
-	color.Set(color.Underline)
 	color.Set(color.FgWhite)
 	scores = append(scores, userScore)
 	average := calculatePercentageOfScore(userScore, scores)
 
 	fmt.Fprintf(os.Stdout, " \nYou answered %d questions correctly (%d / %d)\n", userScore,
 		userScore, totalQuestions)
+
+	color.Set(color.FgMagenta)
+
+	color.Set(color.Underline)
 	fmt.Fprintf(os.Stdout, " \n Your score is better than %s%d \n", "%", average)
 
 }
@@ -71,12 +41,18 @@ func askQuestion(question Questions) int {
 	questions := question.Questions
 
 	done := make(chan string)
-	go getInput(done)
 
 	totalQuestions := len(questions)
 
 	for i := 0; i < totalQuestions; i++ {
-		ans, err := eachQuestion(questions[i].Question, questions[i].Answers, questions[i].CorrectAnswers, done)
+
+		explanation := questions[i].Explanation
+		question := questions[i].Question
+		answers := questions[i].Answers
+		correctAnswer := questions[i].CorrectAnswers
+
+		ans, err := eachQuestion(question, answers, correctAnswer, explanation, done)
+		seperateLines()
 		if err != nil && ans == -1 {
 			return totalScore
 		}
@@ -85,10 +61,12 @@ func askQuestion(question Questions) int {
 	return totalScore
 }
 
-func eachQuestion(Quest string, answers []string, correctAnswer string, done <-chan string) (int, error) {
+func eachQuestion(Quest string, answers []string, correctAnswer string, explanation string, done <-chan string) (int, error) {
+
+	color.Set(color.FgHiRed)
+	fmt.Println("\nQuestion:\n ")
 
 	color.Set(color.FgHiWhite)
-	fmt.Println("\nQuestion:\n ")
 	fmt.Printf("%s: \n", Quest)
 
 	color.Set(color.FgHiCyan)
@@ -100,29 +78,32 @@ func eachQuestion(Quest string, answers []string, correctAnswer string, done <-c
 
 	color.Set(color.FgHiYellow)
 	fmt.Println("\nPlease Type your answer?:\n ")
-	color.Set(color.FgHiWhite)
 
-	for {
-		select {
+	color.Set(color.FgHiMagenta)
+	var answer string
+	fmt.Scan(&answer)
 
-		case ans := <-done:
-			score := 0
+	return getEachAnswer(answer, correctAnswer, explanation)
+}
 
-			if checkAnswer(ans, correctAnswer) {
-				color.Set(color.FgHiGreen)
-				fmt.Printf("\nWell done! Yo go girl/boy? \n ")
-				score = 1
+func getEachAnswer(answer string, correctAnswer string, explanation string) (int, error) {
 
-			} else {
-				color.Set(color.FgHiRed)
-				fmt.Printf("\nVuppsy dupsy! Try better new time ;) \n ")
-				return 0, fmt.Errorf("Wrong Answer")
-			}
-			seperateLines()
-			return score, nil
-		}
+	score := 0
+	if checkAnswer(answer, correctAnswer) {
 
+		color.Set(color.FgHiGreen)
+		fmt.Printf("\nWell done! Yo go girl/boy? \n ")
+		score = 1
+		return score, nil
 	}
+
+	color.Set(color.FgHiRed)
+	fmt.Printf("\nVuppsy dupsy!\n ")
+
+	color.Set(color.FgHiGreen)
+	fmt.Printf("\nexplanation :  %s ", explanation)
+
+	return 0, fmt.Errorf("Wrong Answer")
 }
 
 var startQuizCmd = &cobra.Command{
@@ -137,14 +118,4 @@ var startQuizCmd = &cobra.Command{
 func init() {
 
 	rootCmd.AddCommand(startQuizCmd)
-}
-
-func getInput(input chan string) {
-
-	for {
-		in := bufio.NewReader(os.Stdin)
-		result, err := in.ReadString('\n')
-		handleError(err)
-		input <- result
-	}
 }
