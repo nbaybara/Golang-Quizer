@@ -1,5 +1,6 @@
+## nurbaybara
+
 # Golang-Quizer
-## _The Last Markdown Editor, Ever_
 
 Helllo, this is a simple quiz. This project developed by using this technologies : GoLang, Cobra CLI
 
