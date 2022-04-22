@@ -22,7 +22,7 @@ func readJson() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Successfully Opened problems.json")
+	fmt.Println("Successfully Opened problems.json\n")
 	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)

@@ -2,38 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"strings"
 
-	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
 var scores []int
 var questions Questions
-
-func checkAnswer(ans string, expectedAnswer string) bool {
-	if strings.Compare(strings.Trim(strings.ToLower(ans), "\n"), strings.ToLower(expectedAnswer)) == 0 {
-		return true
-	}
-	return false
-}
-
-func giveBriefOfQuiz(userScore int, totalQuestions int) {
-
-	color.Set(color.FgWhite)
-	scores = append(scores, userScore)
-	average := calculatePercentageOfScore(userScore, scores)
-
-	fmt.Fprintf(os.Stdout, " \nYou answered %d questions correctly (%d / %d)\n", userScore,
-		userScore, totalQuestions)
-
-	color.Set(color.FgMagenta)
-
-	color.Set(color.Underline)
-	fmt.Fprintf(os.Stdout, " \n Your score is better than %s%d \n", "%", average)
-
-}
 
 func askQuestion(question Questions) int {
 
@@ -63,26 +37,24 @@ func askQuestion(question Questions) int {
 
 func eachQuestion(Quest string, answers []string, correctAnswer string, explanation string, done <-chan string) (int, error) {
 
-	color.Set(color.FgHiRed)
+	var answer string
+	yellowColor()
 	fmt.Println("\nQuestion:\n ")
 
-	color.Set(color.FgHiWhite)
 	fmt.Printf("%s: \n", Quest)
 
-	color.Set(color.FgHiCyan)
+	cyanColor()
 	fmt.Println("\nAnswers:\n ")
 
 	for x := 0; x < len(answers); x++ {
 		fmt.Println("-", answers[x])
 	}
 
-	color.Set(color.FgHiYellow)
+	whiteColor()
 	fmt.Println("\nPlease Type your answer?:\n ")
 
-	color.Set(color.FgHiMagenta)
-	var answer string
+	magentaColor()
 	fmt.Scan(&answer)
-
 	return getEachAnswer(answer, correctAnswer, explanation)
 }
 
@@ -91,19 +63,26 @@ func getEachAnswer(answer string, correctAnswer string, explanation string) (int
 	score := 0
 	if checkAnswer(answer, correctAnswer) {
 
-		color.Set(color.FgHiGreen)
-		fmt.Printf("\nWell done! Yo go girl/boy? \n ")
+		rightAnswer()
 		score = 1
 		return score, nil
 	}
 
-	color.Set(color.FgHiRed)
-	fmt.Printf("\nVuppsy dupsy!\n ")
-
-	color.Set(color.FgHiGreen)
-	fmt.Printf("\nexplanation :  %s ", explanation)
-
+	wrongAnswer(explanation)
 	return 0, fmt.Errorf("Wrong Answer")
+}
+
+func rightAnswer() {
+	greenColor()
+	fmt.Printf("\nWell done! Yo go girl/boy? \n ")
+}
+
+func wrongAnswer(explanation string) {
+	redColor()
+	fmt.Printf("\nVuppsy dupsy!\n ")
+	boldfont()
+	greenColor()
+	fmt.Printf("\nexplanation :  %s ", explanation)
 }
 
 var startQuizCmd = &cobra.Command{

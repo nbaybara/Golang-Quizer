@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/fatih/color"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 )
@@ -41,31 +40,57 @@ type Questions struct {
 }
 
 func handleRequests() {
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", readJsonFile).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8083", router))
 }
 
+func welcoming() {
+
+	boldfont()
+	blueColor()
+	fmt.Printf("Welcome to Quiz, Quizer :) Are you ready to challenge ? Let's start \n")
+}
+
 func startQuiz() {
 
-	color.Set(color.Reset)
-	color.Set(color.Italic)
+	resetColor()
+	italicFont()
 	totalScore := askQuestion(questions)
 	finishQuiz(totalScore)
 }
 
+func giveBriefOfQuiz(userScore int, totalQuestions int) {
+
+	whiteColor()
+	scores = append(scores, userScore)
+	average := calculatePercentageOfScore(userScore, scores)
+
+	fmt.Fprintf(os.Stdout, " \nYou answered %d questions correctly (%d / %d)\n", userScore,
+		userScore, totalQuestions)
+
+	magentaColor()
+	textUnderline()
+	fmt.Fprintf(os.Stdout, " \n Your score is better than %s%d \n", "%", average)
+
+}
+
 func finishQuiz(totalScore int) {
+
 	giveBriefOfQuiz(totalScore, len(questions.Questions))
 	restartQuiz()
-
 }
 
 func restartQuiz() {
 
-	color.Set(color.FgHiMagenta)
 	var answer string
-	color.Set(color.FgHiMagenta)
-	fmt.Printf("Do u want to tested again?: yes | no ?\n")
+	blueColor()
+	boldfont()
+
+	fmt.Printf("Do u want to start test?: yes | no ?\n")
+	whiteColor()
+
 	fmt.Scan(&answer)
 
 	if checkAnswer(answer, "yes") {
@@ -73,11 +98,9 @@ func restartQuiz() {
 		startQuiz()
 		return
 	}
-
-	color.Set(color.FgRed)
+	redColor()
 	fmt.Println("Thank you for testing my project. Feel free to contribute it :)")
 	os.Stdin.Close()
-
 }
 
 func init() {
@@ -87,5 +110,6 @@ func init() {
 		handleRequests() */
 
 	readJson()
+	welcoming()
 	startQuiz()
 }
